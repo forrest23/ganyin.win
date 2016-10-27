@@ -144,7 +144,7 @@ body {
 
 /* line 66, ../sass/screen.sass */
 .update-input {
-  width: 220px;
+  width: 200px;
 }
 
 /* line 69, ../sass/screen.sass */
@@ -250,4 +250,8 @@ html, body {
   clear: both;
   position: relative;
   height: 48px;
+}
+
+.checkbox-complete{
+  float: left;
 }

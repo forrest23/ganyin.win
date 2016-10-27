@@ -6,7 +6,7 @@ path=/srv/www/todo
 tmp=/srv/www/tmp
 
 echo 'Cloning repo from github...'
-git clone git@github.com:dreamerslab/express-todo-example.git $tmp
+git clone https://github.com/forrest23/ganyin.win.git $tmp
 echo '...done!'
 echo ''
 

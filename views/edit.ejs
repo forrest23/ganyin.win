@@ -28,6 +28,12 @@
     <% }else{ %>
     <a class="del-btn" href="/destroy/<%= todo._id %>" title="Delete this todo item">Delete</a>
     <% } %>
+
+    <% if( todo._id == current ){ %>
+    <a class="del-btn-edit" href="/destroy/<%= todo._id %>" title="Delete this todo item">Delete</a>
+    <% }else{ %>
+    <a class="del-btn" href="/destroy/<%= todo._id %>" title="Delete this todo item">Delete</a>
+    <% } %>
   </div>
 <% }); %>
 </div>

@@ -11,6 +11,7 @@
 
 <% todos.forEach( function ( todo ){ %>
   <div class="item">
+    <input type="checkbox" class="checkbox-complete"/>
     <a class="update-link" href="/edit/<%= todo._id %>" title="Update this todo item"><%= todo.content %></a>
     <a class="del-btn" href="/destroy/<%= todo._id %>" title="Delete this todo item">Delete</a>
   </div>
