@@ -2,6 +2,7 @@ var utils = require('../utils');
 var mongoose = require('mongoose');
 var Todo = mongoose.model('Todo');
 var User = mongoose.model('User');
+var Joke = mongoose.model('Joke');
 
 exports.index = function (req, res, next) {
   var user_id = req.cookies ?
@@ -136,3 +137,18 @@ exports.createUser = function (req, res, next) {
     res.redirect('/');
   });
 };
+
+exports.joke = function (req, res, next) {
+  Joke.
+    find({ joke_id: "" }).
+    sort('-create_at').
+    exec(function (err, jokes) {
+      if (err) return next(err);
+
+      res.render('joke', {
+        title: '笑话',
+        jokes: jokes
+      });
+    });
+};
+

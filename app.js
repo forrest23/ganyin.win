@@ -43,6 +43,7 @@ app.post( '/update/:id',  routes.update );
 app.get( '/getTodos',  routes.getTodos );
 app.get( '/getTodoById/:id',  routes.getTodoById );
 app.get( '/createUser',  routes.createUser );
+app.get( '/joke',  routes.joke );
 
 
 app.use( static( path.join( __dirname, 'public' )));

@@ -1,0 +1,11 @@
+<% layout( 'layout' ) -%>
+
+<h1 id="page-title"><%= title %></h1>
+
+<div id="joke-list">
+<% jokes.forEach( function ( joke ){ %>
+  <div class="joke-item">
+    <a class="joke-update-link"><%= joke.content %></a>
+  </div>
+<% }); %>
+</div>

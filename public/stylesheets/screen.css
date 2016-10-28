@@ -255,3 +255,30 @@ html, body {
 .checkbox-complete{
   float: left;
 }
+
+#joke-list {
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+}
+
+.joke-item {
+  overflow: hidden;
+  *zoom: 1;
+  background-color: #f9f9f9;
+  border: 1px solid #eeeeee;
+  border-radius: 6px 6px 6px 6px;
+  list-style: none outside none;
+  margin: 20px 0 0;
+  padding: 8px 9px 9px;
+  position: relative;
+  text-shadow: 1px 1px 0 white;
+}
+
+.joke-update-link {
+  float: left;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  color: #666666;
+
+  display:block;
+}

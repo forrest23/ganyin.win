@@ -13,6 +13,17 @@ var User = new Schema({
     password: String,
 });
 
+var Joke = new Schema({
+    joke_id: String,
+    author: String,
+    author_img: String,
+    create_at: Date,
+    content: String,
+    vote: String,
+    comments: String
+});
+
 mongoose.model('Todo', Todo);
 mongoose.model('User', User);
-mongoose.connect('mongodb://localhost/express-todo');
+mongoose.model('Joke', Joke);
+mongoose.connect('mongodb://localhost/express');
