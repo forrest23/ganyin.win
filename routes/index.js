@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Todo = mongoose.model('Todo');
 var User = mongoose.model('User');
 var Joke = mongoose.model('Joke');
+var License = mongoose.model('License');
 
 exports.index = function (req, res, next) {
   var user_id = req.cookies ?
@@ -140,7 +141,7 @@ exports.createUser = function (req, res, next) {
 
 exports.joke = function (req, res, next) {
   Joke.
-    find({ joke_id: "" }).
+    find().
     sort('-create_at').
     exec(function (err, jokes) {
       if (err) return next(err);
@@ -148,6 +149,30 @@ exports.joke = function (req, res, next) {
       res.render('joke', {
         title: '笑话',
         jokes: jokes
+      });
+    });
+};
+
+exports.charts = function (req, res, next) {
+  License.
+    find().
+    sort('date').
+    exec(function (err, licenses) {
+      if (err) return next(err);
+
+      var dates = [];
+      var amounts = [];
+      var persons = [];
+      for (var i = 0; i < licenses.length; i++) {
+        dates.push(licenses[i].date);
+        amounts.push(licenses[i].amount);
+        persons.push(licenses[i].person);
+      }
+      res.render('charts', {
+        title: '上海牌照投放和投标趋势图',
+        dates: dates,
+        amounts: amounts,
+        persons: persons
       });
     });
 };

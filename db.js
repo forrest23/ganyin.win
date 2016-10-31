@@ -23,7 +23,18 @@ var Joke = new Schema({
     comments: String
 });
 
+var License = new Schema({
+    date: String,
+    amount: Number,
+    mini_price: Number,
+    avg_price: Number,
+    person: Number,
+    deadline: String
+});
+
 mongoose.model('Todo', Todo);
 mongoose.model('User', User);
 mongoose.model('Joke', Joke);
+mongoose.model('License', License);
 mongoose.connect('mongodb://localhost/express');
+

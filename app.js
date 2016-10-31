@@ -44,6 +44,8 @@ app.get( '/getTodos',  routes.getTodos );
 app.get( '/getTodoById/:id',  routes.getTodoById );
 app.get( '/createUser',  routes.createUser );
 app.get( '/joke',  routes.joke );
+app.get( '/charts',  routes.charts );
+
 
 
 app.use( static( path.join( __dirname, 'public' )));

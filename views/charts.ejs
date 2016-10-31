@@ -1,0 +1,102 @@
+<% layout( 'layout' ) -%>
+
+	<h1 id="page-title">
+		<%= title %>
+	</h1>
+	<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+	<div id="main" style="height:400px"></div>
+	<!-- ECharts单文件引入 -->
+	<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+	<script type="text/javascript">
+
+
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: 'http://echarts.baidu.com/build/dist'
+            }
+        });
+        
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+            ],
+            function (ec) {
+                // 基于准备好的dom，初始化echarts图表
+                var myChart = ec.init(document.getElementById('main')); 
+                
+              var  option = {
+  
+    tooltip : {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['投放数量','投标人数']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    calculable : true,
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : false,
+            data :<%- JSON.stringify(dates)%>
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value',
+        }
+    ],
+    series : [
+        {
+            name:'投放数量',
+            type:'line',
+            data:<%- JSON.stringify(amounts) %>,
+            markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name: '平均值'}
+                ]
+            }
+        },
+        {
+            name:'投标人数',
+            type:'line',
+            data:<%- JSON.stringify(persons) %>,
+             markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                ]
+            },
+            markLine : {
+                data : [
+                    {type : 'average', name : '平均值'}
+                ]
+            }
+        }
+    ]
+};
+     
+        
+                // 为echarts对象加载数据 
+                myChart.setOption(option); 
+            }
+        );
+    </script>
