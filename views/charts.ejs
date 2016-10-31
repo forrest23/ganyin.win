@@ -6,14 +6,14 @@
 	<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
 	<div id="main" style="height:400px"></div>
 	<!-- ECharts单文件引入 -->
-	<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+	<script src="https://echarts.baidu.com/build/dist/echarts.js"></script>
 	<script type="text/javascript">
 
 
         // 路径配置
         require.config({
             paths: {
-                echarts: 'http://echarts.baidu.com/build/dist'
+                echarts: 'https://echarts.baidu.com/build/dist'
             }
         });
         
@@ -36,7 +36,7 @@
         data:['投放数量','投标人数']
     },
     toolbox: {
-        show : true,
+        show : false,
         feature : {
             mark : {show: true},
             dataView : {show: true, readOnly: false},
@@ -45,7 +45,7 @@
             saveAsImage : {show: true}
         }
     },
-    calculable : true,
+    calculable : false,
     xAxis : [
         {
             type : 'category',
@@ -92,9 +92,7 @@
             }
         }
     ]
-};
-     
-        
+};   
                 // 为echarts对象加载数据 
                 myChart.setOption(option); 
             }
