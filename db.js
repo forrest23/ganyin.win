@@ -32,9 +32,27 @@ var License = new Schema({
     deadline: String
 });
 
+var XcxUser = new Schema({
+    userCode: String,
+    userName: String,
+    openId: String,
+    nickName: String,
+    gender: String,
+    language: String,
+    city: String,
+    province: String,
+    country: String,
+    avatarUrl: String,
+    appid: String,
+    timestamp: String,
+    create_at: Date,
+    updated_at: Date
+});
+
 mongoose.model('Todo', Todo);
 mongoose.model('User', User);
 mongoose.model('Joke', Joke);
 mongoose.model('License', License);
+mongoose.model('XcxUser', XcxUser);
 mongoose.connect('mongodb://localhost/express');
 

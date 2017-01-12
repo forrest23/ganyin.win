@@ -1,9 +1,12 @@
 var utils = require('../utils');
 var mongoose = require('mongoose');
+var request = require('request');
+var WXBizDataCrypt = require('../WXBizDataCrypt')
 var Todo = mongoose.model('Todo');
 var User = mongoose.model('User');
 var Joke = mongoose.model('Joke');
 var License = mongoose.model('License');
+var XcxUser = mongoose.model('XcxUser');
 
 exports.index = function (req, res, next) {
   var user_id = req.cookies ?
@@ -151,6 +154,58 @@ exports.joke = function (req, res, next) {
         jokes: jokes
       });
     });
+};
+
+exports.xcxlogin = function (req, res, next) {
+  var code = req.query.code;
+  var encryptedData = req.query.encryptedData;
+  var iv = req.query.iv;
+  var appId = 'wxff3b3f18b08829d7';
+  var appSecret = 'd60bbe15f5acdd2a138e858e1ba16cdf';
+
+  var url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' + appId + '&secret=' + appSecret + '&js_code=' + code + '&grant_type=authorization_code';
+
+  request(url, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var info = JSON.parse(body);
+      var sessionKey = info.session_key;
+      try {
+        var pc = new WXBizDataCrypt(appId, sessionKey);
+        var data = pc.decryptData(encryptedData, iv);
+
+        XcxUser.findById(data.openId, function (err, user) {
+          if (user) {
+
+          }
+          else {
+            new XcxUser({
+              userCode: '',
+              userName: '',
+              openId: data.openId,
+              nickName: data.nickName,
+              gender: data.gender,
+              language: data.language,
+              city: data.city,
+              province: data.province,
+              country: data.country,
+              avatarUrl: data.avatarUrl,
+              appid: data.appid,
+              timestamp: data.timestamp,
+              create_at: Date.now(),
+              updated_at: Date.now()
+            }).save(function (err, todo, count) {
+              if (err) return next(err);
+              res.send(data);
+            });
+          }
+        });
+
+      } catch (error) {
+        res.send(daerrorta);
+      }
+    }
+  })
+
 };
 
 exports.charts = function (req, res, next) {
