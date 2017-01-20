@@ -46,6 +46,8 @@ app.get( '/createUser',  routes.createUser );
 app.get( '/joke',  routes.joke );
 app.get( '/charts',  routes.charts );
 app.get( '/xcxlogin',  routes.xcxlogin );
+app.get( '/saveExpressOrder',  routes.saveExpressOrder );
+app.get( '/getExpressOrder',  routes.getExpressOrder );
 
 
 

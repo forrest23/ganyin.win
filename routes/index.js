@@ -2,11 +2,17 @@ var utils = require('../utils');
 var mongoose = require('mongoose');
 var request = require('request');
 var WXBizDataCrypt = require('../WXBizDataCrypt')
+//var log4js = require('log4js');
+
 var Todo = mongoose.model('Todo');
 var User = mongoose.model('User');
 var Joke = mongoose.model('Joke');
 var License = mongoose.model('License');
 var XcxUser = mongoose.model('XcxUser');
+var ExpressOrder = mongoose.model('ExpressOrder');
+var SmsLog = mongoose.model('SmsLog');
+var Account = mongoose.model('Account');
+
 
 exports.index = function (req, res, next) {
   var user_id = req.cookies ?
@@ -156,6 +162,96 @@ exports.joke = function (req, res, next) {
     });
 };
 
+exports.getExpressOrder = function (req, res, next) {
+  var receiver = req.query.receiver;
+  ExpressOrder.
+    find({ receiver: receiver }).
+    sort('-scaner_at').
+    exec(function (err, orders) {
+      if (err) return next(err);
+
+      res.json(orders);
+    });
+};
+
+exports.saveExpressOrder = function (req, res, next) {
+  // log4js.loadAppender('file');
+  // log4js.addAppender(log4js.appenders.file('log/cheese.log'), 'cheese');
+  // var logger = log4js.getLogger('cheese');
+
+  var shipNo = req.query.shipNo;
+  var logisticCode = req.query.logisticCode;
+  var shipperName = req.query.shipperName;
+  var receiver = req.query.receiver;
+  var receiverCode = req.query.receiverCode;
+  var scaner = req.query.scaner;
+  var scanerCode = req.query.scanerCode;
+
+  new ExpressOrder({
+    shipNo: shipNo,
+    logisticCode: logisticCode,
+    shipperName: shipperName,
+    receiver: receiver,
+    receiverCode: receiverCode,
+    scaner: scaner,
+    scanerCode: scanerCode,
+    scaner_at: Date.now(),
+    remark: '',
+    sign_at: '',
+    sign: false,
+  }).save(function (err, expressOrder, count) {
+    if (err) return next(err);
+
+    Account.findOne({ name: receiver }, function (err, account) {
+      if (account) {
+        var mobile = account.phone;
+        if (mobile && mobile.length == 11) {
+          var tpl_value = '#name#=' + receiver + '&#shipperName#=' + shipperName + '&#shipNo#=' + shipNo;
+          tpl_value = encodeURIComponent(tpl_value);
+
+          var url = 'https://v.juhe.cn/sms/send?mobile=' + mobile + '&tpl_id=27581&tpl_value=' + tpl_value + '&dtype=json&key=b170c3e0672820a9b707d0ea40451684';
+          request(url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+              var info = JSON.parse(body);
+              var error_code = info.error_code;
+              var reason = info.reason;
+              var sid = '';
+              var count = '';
+              var fee = '';
+              if (info.error_code == 0) {
+                sid = info.sid;
+                count = info.count;
+                fee = info.fee;
+              }
+
+              new SmsLog({
+                shipperName: shipperName,
+                shipNo: shipNo,
+                error_code: error_code,
+                reason: reason,
+                sid: sid,
+                count: count,
+                fee: fee,
+                create_at: Date.now(),
+                phone: mobile
+              }).save(function (err, todo, count) {
+                if (err) return next(err);
+              });
+
+            }
+          })
+        }
+      }
+      else {
+
+      }
+    });
+
+    res.status(200);
+    res.send('{"success":true}');
+  });
+};
+
 exports.xcxlogin = function (req, res, next) {
   var code = req.query.code;
   var encryptedData = req.query.encryptedData;
@@ -173,9 +269,9 @@ exports.xcxlogin = function (req, res, next) {
         var pc = new WXBizDataCrypt(appId, sessionKey);
         var data = pc.decryptData(encryptedData, iv);
 
-        XcxUser.findById(data.openId, function (err, user) {
+        XcxUser.findOne({ openId: data.openId }, function (err, user) {
           if (user) {
-
+            res.send(user);
           }
           else {
             new XcxUser({
@@ -199,13 +295,11 @@ exports.xcxlogin = function (req, res, next) {
             });
           }
         });
-
       } catch (error) {
         res.send(daerrorta);
       }
     }
   })
-
 };
 
 exports.charts = function (req, res, next) {

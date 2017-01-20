@@ -49,10 +49,50 @@ var XcxUser = new Schema({
     updated_at: Date
 });
 
+var ExpressOrder = new Schema({
+    logisticCode: String,
+    shipperName: String,
+    shipNo: String,
+    receiver: String,
+    receiverCode: String,
+    scaner: String,
+    scanerCode: String,
+    scaner_at: Date,
+    remark: String,
+    sign_at: String,
+    sign: Boolean,
+});
+
+
+var SmsLog = new Schema({
+    shipperName: String,
+    shipNo: String,
+    error_code: String,
+    reason: String,
+    count: String,
+    fee: String,
+    sid: String,
+    create_at: Date,
+    phone: String,
+});
+
+var Account = new Schema({
+    departName: String,
+    name: String,
+    title: String,
+    phone: String,
+    short: String,
+    email: String,
+});
+
+
 mongoose.model('Todo', Todo);
 mongoose.model('User', User);
 mongoose.model('Joke', Joke);
 mongoose.model('License', License);
 mongoose.model('XcxUser', XcxUser);
+mongoose.model('ExpressOrder', ExpressOrder);
+mongoose.model('SmsLog', SmsLog);
+mongoose.model('Account', Account, 'account');
 mongoose.connect('mongodb://localhost/express');
 
