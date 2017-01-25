@@ -52,21 +52,22 @@ var XcxUser = new Schema({
 var ExpressOrder = new Schema({
     logisticCode: String,
     shipperName: String,
-    shipNo: String,
+    shipperCode: String,
     receiver: String,
     receiverCode: String,
     scaner: String,
     scanerCode: String,
-    scaner_at: Date,
+    scanAt: String,
     remark: String,
-    sign_at: String,
+    signAt: String,
     sign: Boolean,
 });
 
 
 var SmsLog = new Schema({
+    shipperCode: String,
     shipperName: String,
-    shipNo: String,
+    logisticCode: String,
     error_code: String,
     reason: String,
     count: String,
@@ -85,6 +86,15 @@ var Account = new Schema({
     email: String,
 });
 
+var FoodOrder = new Schema({
+    orderCode: String,
+    name: String,
+    departName: String,
+    orderDate: String,
+    amount: Number,
+    remark: String,
+});
+
 
 mongoose.model('Todo', Todo);
 mongoose.model('User', User);
@@ -93,6 +103,7 @@ mongoose.model('License', License);
 mongoose.model('XcxUser', XcxUser);
 mongoose.model('ExpressOrder', ExpressOrder);
 mongoose.model('SmsLog', SmsLog);
+mongoose.model('FoodOrder', FoodOrder);
 mongoose.model('Account', Account, 'account');
 mongoose.connect('mongodb://localhost/express');
 

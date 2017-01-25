@@ -12,6 +12,7 @@ var XcxUser = mongoose.model('XcxUser');
 var ExpressOrder = mongoose.model('ExpressOrder');
 var SmsLog = mongoose.model('SmsLog');
 var Account = mongoose.model('Account');
+var FoodOrder = mongoose.model('FoodOrder');
 
 
 exports.index = function (req, res, next) {
@@ -162,16 +163,42 @@ exports.joke = function (req, res, next) {
     });
 };
 
+exports.signExpressOrder = function (req, res, next) {
+  var id = req.query.id;
+  var signAt = req.query.signAt;
+  ExpressOrder.update({ _id: id }, { $set: { sign: true, signAt: signAt } }, function (err) {
+    res.status(200);
+    res.send('{"success":true}');
+  });
+}
+
 exports.getExpressOrder = function (req, res, next) {
   var receiver = req.query.receiver;
-  ExpressOrder.
-    find({ receiver: receiver }).
-    sort('-scaner_at').
-    exec(function (err, orders) {
-      if (err) return next(err);
+  var sign = req.query.sign;
+  var pageSize = req.query.pageSize;
+  var lastId = req.query.lastId;
+  if (lastId) {
+    ExpressOrder.
+      find({ receiver: receiver, sign: sign, _id: { $lt: lastId } }).
+      sort('-scanAt').
+      limit(pageSize).
+      exec(function (err, orders) {
+        if (err) return next(err);
 
-      res.json(orders);
-    });
+        res.json(orders);
+      });
+  }
+  else {
+    ExpressOrder.
+      find({ receiver: receiver, sign: sign }).
+      sort('-scanAt').
+      limit(pageSize).
+      exec(function (err, orders) {
+        if (err) return next(err);
+
+        res.json(orders);
+      });
+  }
 };
 
 exports.saveExpressOrder = function (req, res, next) {
@@ -179,25 +206,26 @@ exports.saveExpressOrder = function (req, res, next) {
   // log4js.addAppender(log4js.appenders.file('log/cheese.log'), 'cheese');
   // var logger = log4js.getLogger('cheese');
 
-  var shipNo = req.query.shipNo;
+  var shipperCode = req.query.shipperCode;
   var logisticCode = req.query.logisticCode;
   var shipperName = req.query.shipperName;
   var receiver = req.query.receiver;
   var receiverCode = req.query.receiverCode;
   var scaner = req.query.scaner;
   var scanerCode = req.query.scanerCode;
+  var scanAt = req.query.scanAt;
 
   new ExpressOrder({
-    shipNo: shipNo,
+    shipperCode: shipperCode,
     logisticCode: logisticCode,
     shipperName: shipperName,
     receiver: receiver,
     receiverCode: receiverCode,
     scaner: scaner,
     scanerCode: scanerCode,
-    scaner_at: Date.now(),
+    scanAt: scanAt,
     remark: '',
-    sign_at: '',
+    signAt: '',
     sign: false,
   }).save(function (err, expressOrder, count) {
     if (err) return next(err);
@@ -206,7 +234,7 @@ exports.saveExpressOrder = function (req, res, next) {
       if (account) {
         var mobile = account.phone;
         if (mobile && mobile.length == 11) {
-          var tpl_value = '#name#=' + receiver + '&#shipperName#=' + shipperName + '&#shipNo#=' + shipNo;
+          var tpl_value = '#name#=' + receiver + '&#shipperName#=' + shipperName + '&#shipNo#=' + logisticCode;
           tpl_value = encodeURIComponent(tpl_value);
 
           var url = 'https://v.juhe.cn/sms/send?mobile=' + mobile + '&tpl_id=27581&tpl_value=' + tpl_value + '&dtype=json&key=b170c3e0672820a9b707d0ea40451684';
@@ -225,8 +253,9 @@ exports.saveExpressOrder = function (req, res, next) {
               }
 
               new SmsLog({
+                shipperCode: shipperCode,
                 shipperName: shipperName,
-                shipNo: shipNo,
+                logisticCode: logisticCode,
                 error_code: error_code,
                 reason: reason,
                 sid: sid,
@@ -250,6 +279,59 @@ exports.saveExpressOrder = function (req, res, next) {
     res.status(200);
     res.send('{"success":true}');
   });
+};
+
+exports.saveFoodOrder = function (req, res, next) {
+  var departName = '未知';
+  var name = req.body.name;
+
+  Account.findOne({ name: name }, function (err, account) {
+    if (account) {
+      departName = account.departName;
+    }
+
+    new FoodOrder({
+      orderCode: req.body.orderCode,
+      name: req.body.name,
+      departName: departName,
+      orderDate: req.body.orderDate,
+      amount: req.body.amount,
+      remark: req.body.remark,
+    }).save(function (err, foodOrder, count) {
+      if (err) return next(err);
+
+      res.status(200);
+      res.send('{"success":true}');
+    });
+  });
+};
+
+exports.getMyFoodOrder = function (req, res, next) {
+  var orderCode = req.query.orderCode;
+  var lastId = req.query.lastId;
+  var pageSize = req.query.pageSize;
+  if (lastId) {
+    FoodOrder.
+      find({ orderCode: orderCode, _id: { $lt: lastId } }).
+      sort('-orderDate').
+      limit(pageSize).
+      exec(function (err, foodOrders) {
+        if (err) return next(err);
+
+        res.json(foodOrders);
+      });
+  }
+  else {
+    FoodOrder.
+      find({ orderCode: orderCode}).
+      sort('-orderDate').
+      limit(pageSize).
+      exec(function (err, foodOrders) {
+        if (err) return next(err);
+
+        res.json(foodOrders);
+      });
+  }
 };
 
 exports.xcxlogin = function (req, res, next) {

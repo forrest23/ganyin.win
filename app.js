@@ -48,7 +48,9 @@ app.get( '/charts',  routes.charts );
 app.get( '/xcxlogin',  routes.xcxlogin );
 app.get( '/saveExpressOrder',  routes.saveExpressOrder );
 app.get( '/getExpressOrder',  routes.getExpressOrder );
-
+app.get( '/signExpressOrder',  routes.signExpressOrder );
+app.post( '/saveFoodOrder',  routes.saveFoodOrder );
+app.get( '/getMyFoodOrder',  routes.getMyFoodOrder );
 
 
 app.use( static( path.join( __dirname, 'public' )));
