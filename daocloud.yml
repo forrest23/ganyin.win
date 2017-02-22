@@ -1,13 +1,40 @@
+version: 2.0
 
-version: '2'
+test:
+    image:
+        daocloud/ci-node:0.12
 
-services: mongodb
-  ganyin.win:
-    image: daocloud/ci-node:0.12
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      NODE_ENV: production
-    ports:
-      - 3001:3001
+    services:
+        mongodb
+
+    # using default docker-link env
+    env:
+        - REDIS_PORT_6379_TCP_PROTO = "tcp"
+        - REDIS_PASSWORD = ""
+
+    install:
+        - sudo apt-get update
+
+    before_script:
+        - mkdir -p /gopath/src/golang-redis-sample
+        - mv ./* /gopath/src/golang-redis-sample
+
+    script:
+        - export GOPATH=/gopath
+        - go get -t golang-redis-sample
+        - go test golang-redis-sample
+
+build:
+    lite_image:
+        compile:
+            dockerfile_path: Dockerfile
+            build_dir: /
+            cache: true
+
+        extract:
+            - /go/bin/app
+
+        package:
+              dockerfile_path: Dockerfile.sec
+              build_dir: /
+              cache: true
