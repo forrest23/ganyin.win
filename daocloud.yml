@@ -1,9 +1,9 @@
 
 version: '2'
 
-services:
+services: mongodb
   ganyin.win:
-    image: ganyin.win:latest
+    image: daocloud/ci-node:0.12
     build:
       context: .
       dockerfile: Dockerfile
