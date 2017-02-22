@@ -1,0 +1,18 @@
+
+version: '2'
+
+services:
+  ganyin.win:
+    image: ganyin.win:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3001:3001
+      - 5858:5858
+    volumes:
+      - .:/usr/src/app
+    ## set your startup file here
+    command: node --debug=5858 app.js

@@ -1,0 +1,13 @@
+
+version: '2'
+
+services:
+  ganyin.win:
+    image: ganyin.win:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3001:3001
