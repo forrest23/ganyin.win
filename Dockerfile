@@ -7,4 +7,4 @@ RUN mkdir -p /usr/src/app && mv /tmp/node_modules /usr/src
 WORKDIR /usr/src/app
 COPY . /usr/src/app
 EXPOSE 3001
-CMD npm start
+ENTRYPOINT ["node", "app.js"]
